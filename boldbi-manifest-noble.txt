@@ -163,25 +163,8 @@ ENV INSTALL_POSTGRES=${INSTALL_POSTGRES}
 
 WORKDIR /application
 
-# ====================================================
-# Install .NET Runtime 10
-# (base image already ships .NET 10; this installs the
-#  runtime into /application/dotnet as before)
-# ====================================================
-
-RUN case "$TARGETARCH" in \
-      amd64) RUNTIME_ARCH=x64 ;; \
-      arm64) RUNTIME_ARCH=arm64 ;; \
-      *) echo "Unsupported architecture: $TARGETARCH"; exit 1 ;; \
-    esac && \
-    mkdir -p /application/dotnet && \
-    curl -L -o /tmp/aspnetcore-runtime.tar.gz \
-    "https://builds.dotnet.microsoft.com/dotnet/aspnetcore/Runtime/10.0.14/aspnetcore-runtime-10.0.14-linux-${RUNTIME_ARCH}.tar.gz" && \
-    tar -xzf /tmp/aspnetcore-runtime.tar.gz -C /application/dotnet && \
-    chmod +x /application/dotnet/dotnet && \
-    rm -f /tmp/aspnetcore-runtime.tar.gz
-
-RUN ln -sf /application/dotnet/dotnet /usr/bin/dotnet
+# .NET 10 runtime is NOT installed here: the aspnet:10.0-noble base image
+# already ships the ASP.NET Core 10 runtime (/usr/share/dotnet, on PATH).
 
 EXPOSE 80
 EXPOSE 443
